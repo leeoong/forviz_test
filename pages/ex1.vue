@@ -21,6 +21,16 @@
 
 <style>
 
+	html, body {
+		margin: 0px 0px 0px 0px;
+		padding: 0px 0px 0px 0px;
+		width: 100%; height: 100%;
+	}
+	body {
+		font-family: Tahoma; font-size: 14px;
+		color: #e7e7e7; background-color: #282627;
+	}
+
 	.container {
 		margin: 0px auto;
 		padding: 4% 4% 4% 4%;
@@ -48,37 +58,27 @@
 		height: 100%;
 	}
 
-	html, body {
-		margin: 0px 0px 0px 0px;
-		padding: 0px 0px 0px 0px;
-		width: 100%; height: 100%;
-	}
-	body {
-		font-family: Tahoma; font-size: 12px;
-		color: #e7e7e7; background-color: #282627;
-	}
-
 </style>
 
 <script>
-export default {
-	head: {
-		title: 'Forviz - 01 - CSS Test'
-	},
-	data () {
-		return {
-			Images: [],
-		}
-	},
-	created () {
-		this.get_images()
-	},
-	methods: {
-		get_images () {
-			this.$axios.get('https://picsum.photos/v2/list').then((res) => {
-				this.Images = res.data
-			}).catch((errors) => { console.log(errors) })
+	export default {
+		head: {
+			title: 'Forviz - 01 - CSS Test'
+		},
+		data () {
+			return {
+				Images: [],
+			}
+		},
+		created () {
+			this.get_images()
+		},
+		methods: {
+			get_images () {
+				this.$axios.get('https://picsum.photos/v2/list').then((res) => {
+					this.Images = res.data
+				}).catch((errors) => { console.log(errors) })
+			}
 		}
 	}
-}
 </script>
