@@ -18,20 +18,43 @@
 					<div style="position: absolute; left: 0px; bottom: 0px; width: 100%; height: 225px; background-color: rgba(215,215,215,0.05);"></div>
 				</div>
 				<div class="panel-right">
+
 					<div class="tab-container">
-						<div class="tab" tabindex="-1">
+						<div class="tab" tabindex="-1" @click="getTabContent('thisweek')">
 							<div style="padding-bottom: 5px;">THIS WEEK</div>
 							<div class="tab-highlight"></div>
 						</div>
-						<div class="tab" tabindex="-1">
+						<div class="tab" tabindex="-1" @click="getTabContent('nextweek')">
 							<div style="padding-bottom: 5px;">NEXT WEEK</div>
 							<div class="tab-highlight"></div>
 						</div>
-						<div class="tab" tabindex="-1">
+						<div class="tab" tabindex="-1" @click="getTabContent('wholemonth')">
 							<div style="padding-bottom: 5px;">WHOLE MONTH</div>
 							<div class="tab-highlight"></div>
 						</div>
 					</div>
+
+					<div class="tab-content">
+						<div
+							v-for="(r, i) in DateLists" :key="i"
+							style="padding-top: 40px;"
+						>
+							<div class="date-title">{{ r.DateOfWeek }}, {{ r.DateShow }}</div>
+							<div
+								v-for="(booking, i_booking) in r.Bookings" :key="i_booking"
+								style="position: relative; padding: 20px 0px 0px 60px;"
+							>
+								<div style="opacity: 0.65;">{{ booking.begin }} - {{ booking.end }}</div>
+								<div>{{ booking.title }}</div>
+								<div class="dot"></div>
+							</div>
+						</div>
+					</div>
+
+					<pre>{{ DateLists }}</pre>
+
+					<div class="vertical-line"></div>
+
 				</div>
 			</div>
 		</div>
@@ -60,6 +83,8 @@ export default {
 			BookingsNextWeek: [],
 			BookingsWholeMonth: [],
 
+			DateLists: [],
+
 		}
 	},
 	mounted () {
@@ -81,10 +106,53 @@ export default {
 					console.log(r)
 					r.begin = moment(r.startTime, 'YYYY-MM-DD hh:mm:ss').format('hh:mm')
 					r.end = moment(r.endTime, 'YYYY-MM-DD hh:mm:ss').format('hh:mm')
-					console.log(r.end)
 				})
+				
+				this.getTabContent('thisweek')
 
 			}).catch((errors) => { console.log(errors) })
+		},
+		getTabContent (type) {
+
+			let CurrentBookings = []
+
+			if( type == "thisweek" ){
+				CurrentBookings = this.BookingsThisWeek
+			}else if( type == "nextweek" ){
+				CurrentBookings = this.BookingsNextWeek
+			}else if( type == "wholemonth" ){
+				CurrentBookings = this.BookingsWholeMonth
+			}
+
+			let DateLists = []
+			CurrentBookings.forEach(function( r, i ){
+				let CurrentDate = moment(r.startTime, 'YYYY-MM-DD hh:mm:ss').format('YYYY-MM-DD')
+				if( !DateLists.includes(CurrentDate) ){
+					DateLists.push(CurrentDate)
+				}
+			})
+
+			DateLists.forEach(function( DateList, i_DateList ){
+				DateLists[i_DateList] = {
+					Date: DateList,
+					DateOfWeek: moment(DateList, 'YYYY-MM-DD').format('dddd'),
+					DateShow: moment(DateList, 'YYYY-MM-DD').format('DD MMM'),
+					Bookings: []
+				}
+				CurrentBookings.forEach(function( r, i ){
+					let CurrentDate = moment(r.startTime, 'YYYY-MM-DD hh:mm:ss').format('YYYY-MM-DD')
+					if( DateList == CurrentDate ){
+						r.begin = moment(r.startTime, 'YYYY-MM-DD hh:mm:ss').format('hh:mm')
+						r.end = moment(r.endTime, 'YYYY-MM-DD hh:mm:ss').format('hh:mm')
+						DateLists[i_DateList].Bookings.push(r)
+					}
+				})
+			})
+
+			this.DateLists = DateLists
+
+			console.log(this.DateLists)
+
 		}
 	}
 }
@@ -142,13 +210,16 @@ export default {
 		flex-grow: 1;
 		position: relative;
 		height: 100%;
-		color: #000; background-color: #414141;
+		color: #000; background-color: #fff;
 	}
 
 	.tab-container {
+		position: absolute;
+		z-index: 3;
+		left: 0px; top: 0px;
 		display: flex; justify-content: flex-start; align-items: flex-end;
 		padding: 0px 20px 0px 20px;
-		height: 60px;
+		width: 100%; height: 60px;
 		background-color: #fafafa;
 		-webkit-box-shadow: inset rgba(0,0,0,0.1) 10px -7px 10px;
 		-moz-box-shadow: inset rgba(0,0,0,0.1) 10px -7px 10px;
@@ -166,6 +237,36 @@ export default {
 		margin: 0px auto;
 		width: 30px; height: 3px;
 		background-color: transparent;
+	}
+
+	.tab-content {
+		position: relative;
+		z-index: 2;
+		min-height: 100%;
+		padding: 60px 0px 0px 0px;
+	}
+	.vertical-line {
+		position: absolute;
+		z-index: 1;
+		left: 40px; top: 0px;
+		width: 1px; height: 100%;
+		background-color: #eaeaea;
+	}
+
+	.date-title {
+		padding: 0px 0px 0px 60px;
+		height: 30px; line-height: 30px;
+		font-size: 14px; font-weight: bold;
+		color: #aeaeae; background-color: #fafafa;
+		border: 1px solid #eaeaea;
+	}
+
+	.dot {
+		position: absolute;
+		left: 37px; top: 27px;
+		width: 6px; height: 6px;
+		background-color: #e00;
+		border-radius: 50%;
 	}
 
 </style>
