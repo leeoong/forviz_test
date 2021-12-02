@@ -314,7 +314,7 @@ export default {
 	},
 	methods: {
 		handleCheckAvailability () {
-			this.$axios.post('http://localhost:8888/checkAvailability',{
+			this.$axios.post('https://forviz-node-test.herokuapp.com/checkAvailability',{
 				room: this.Room,
 				startTime: this.StartDate+" "+this.StartHour+":"+this.StartMinute+":00",
 				endTime : this.EndDate+" "+this.EndHour+":"+this.EndMinute+":59",
@@ -331,7 +331,7 @@ export default {
 			}).catch((errors) => { console.log(errors) })
 		},
 		getBookingsForWeek () {
-			this.$axios.post('http://localhost:8888/getBookingsForWeek',{
+			this.$axios.post('https://forviz-node-test.herokuapp.com/getBookingsForWeek',{
 				room: this.TodayRoom,
 				today: this.Today,
 			}).then((res) => {

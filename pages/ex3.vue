@@ -92,7 +92,7 @@ export default {
 	},
 	methods: {
 		getBookingsForWeek () {
-			this.$axios.post('http://localhost:8888/getBookingsForWeek',{
+			this.$axios.post('https://forviz-node-test.herokuapp.com/getBookingsForWeek',{
 				room: this.TodayRoom,
 				today: this.Today,
 			}).then((res) => {
